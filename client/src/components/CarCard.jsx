@@ -47,7 +47,6 @@ const CarCard = ({ car }) => {
           </div>
         </div>
 
-        {/* Grouped features into one grid instead of repeating multiple times */}
         <div className='mt-4 grid grid-cols-2 gap-y-2 text-gray-600'>
           <div className='flex items-center text-sm text-muted-foreground'>
             <img src={assets.users_icon} className='h-4 mr-2' alt="seats" />
