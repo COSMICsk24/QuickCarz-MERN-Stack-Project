@@ -1,104 +1,118 @@
-import Booking from "../models/Booking.js"
+import Booking from "../models/Booking.js";
 import Car from "../models/Car.js";
 
+const checkAvailability = async (car, pickupDate, returnDate) => {
+  const bookings = await Booking.find({
+    car,
+    pickupDate: { $lte: returnDate },
+    returnDate: { $gte: pickupDate },
+  });
+  return bookings.length === 0;
+};
 
+export const checkAvailabilityOfCar = async (req, res) => {
+  try {
+    const { location, pickupDate, returnDate } = req.body;
+    const cars = await Car.find({ location, isAvailable: true });
 
-const checkAvailability = async(car, pickupDate, returnDate)=>{
-    const bookings = await Booking.find({
-        car,
-        pickupDate: {$lte: returnDate},
-        returnDate: {$gte: pickupDate},
-    })
-    return bookings.length === 0;
-}
+    const availableCarsPromises = cars.map(async (car) => {
+      const isAvailable = await checkAvailability(car._id, pickupDate, returnDate);
+      return { ...car._doc, isAvailable };
+    });
 
-export const checkAvailabilityOfCar = async (req, res)=>{
-    try{
-        const {location, pickupDate, returnDate} = req.body
-        const cars = await Car.find({location, isAvailable: true})
-        const availableCarsPromises = cars.map(async()=>{
-        const isAvailable = await checkAvailability(car._id, pickupDate, returnDate)
-        return {...car._doc, isAvailable: isAvailable}
-        })
-        let availableCars =  await Promise.all(availableCarsPromises);
-        availableCars = availableCars.filter(car => car.isAvailable === true)
-        res.json({success: true, availableCars})
+    let availableCars = await Promise.all(availableCarsPromises);
+    availableCars = availableCars.filter((car) => car.isAvailable === true);
 
-    }catch(error){
-        console.log(error.message);
-        res.json({success: false, message: error.message})
-    }
-}
+    res.json({ success: true, availableCars });
+  } catch (error) {
+    console.log(error.message);
+    res.json({ success: false, message: error.message });
+  }
+};
 
-export const createBooking = async (req, res)=>{
-    try{
-        const {_id} = req.user;
-        const {car, pickupDate, returnDate} = req.body;
-        const isAvailable = await checkAvailability(car, pickupDate, returnDate)
-        if(isAvailable){
-            return res.json({success: false, message: "car is not available"})
-        }
-        const carData = await Car.findById(car)
+export const createBooking = async (req, res) => {
+  try {
+    const { _id } = req.user;
+    const { car, pickupDate, returnDate } = req.body;
 
-        const picked = new Date(pickupDate);
-        const returned = new Date(returnDate);
-        const noOfDays = Math.ceil((returned - picked)/(1000 * 60 * 60 * 24));
-        const price = carData.pricePerDay * noOfDays;
-        await Booking.create({car, owner: carData.owner, USER: _id, pickupDate, returnDate, price})
-        res.json({success: true, message:"booking created"})
+    const isAvailable = await checkAvailability(car, pickupDate, returnDate);
 
-    }catch(error){
-        console.log(error.message);
-        res.json({success: false, message: error.message})
+    // ✅ FIXED: logic was reversed here
+    if (!isAvailable) {
+      return res.json({ success: false, message: "Car is not available" });
     }
 
-}
+    const carData = await Car.findById(car);
 
-export const getUserBookings = async (req, res)=>{
-    try{
-        const {_id} = req.user;
-        const bookings = await Booking.find({user: _id }).populate("car").sort({createdAt: -1})
-        res.json({success: true, bookings})
+    const picked = new Date(pickupDate);
+    const returned = new Date(returnDate);
+    const noOfDays = Math.ceil((returned - picked) / (1000 * 60 * 60 * 24));
+    const price = carData.pricePerDay * noOfDays;
 
+    await Booking.create({
+      car,
+      owner: carData.owner,
+      user: _id, // ✅ FIXED casing from USER to user
+      pickupDate,
+      returnDate,
+      price,
+    });
 
-    }catch(error){
-        console.log(error.message);
-        res.json({success: false, message: error.message})
+    res.json({ success: true, message: "Booking created" });
+  } catch (error) {
+    console.log(error.message);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+export const getUserBookings = async (req, res) => {
+  try {
+    const { _id } = req.user;
+    const bookings = await Booking.find({ user: _id })
+      .populate("car")
+      .sort({ createdAt: -1 });
+
+    res.json({ success: true, bookings });
+  } catch (error) {
+    console.log(error.message);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+export const getOwnerBookings = async (req, res) => {
+  try {
+    if (req.user.role !== "owner") {
+      return res.json({ success: false, message: "Unauthorized" });
     }
-}
 
-export const getOwnerBookings = async (req, res)=>{
-    try{
-        if(req.user.role !== 'owner'){
-            return res.json({success: false, message:"Unauthorized"})
-        }
-        const bookings = await Booking.find({owner: req.user._id}).populate('car user').select("-user.password").sort({createdAt: -1})
-        res.json({success: true, bookings})
-        
+    const bookings = await Booking.find({ owner: req.user._id })
+      .populate("car user")
+      .select("-user.password")
+      .sort({ createdAt: -1 });
 
+    res.json({ success: true, bookings });
+  } catch (error) {
+    console.log(error.message);
+    res.json({ success: false, message: error.message });
+  }
+};
 
-    }catch(error){
-        console.log(error.message);
-        res.json({success: false, message: error.message})
+export const changeBookingStatus = async (req, res) => {
+  try {
+    const { _id } = req.user;
+    const { bookingId, status } = req.body;
+
+    const booking = await Booking.findById(bookingId);
+    if (booking.owner.toString() !== _id.toString()) {
+      return res.json({ success: false, message: "Unauthorized" });
     }
-}
 
-export const changeBookingStatus = async (req, res)=>{
-    try{
+    booking.status = status;
+    await booking.save();
 
-        const {_id} = req.user;
-        const {bookingId, status} = req.body
-        const booking = await Booking.findById(bookingId)
-        if(booking.owner.toString() !== _id.toString()){
-            return res.json({success: false, message: "Unauthorized"})
-        }
-
-        booking.status = status;
-        await booking.save();
-        res.json({success: true, message:"Status updated"})
-
-    }catch(error){
-        console.log(error.message);
-        res.json({success: false, message: error.message})
-    }
-}
+    res.json({ success: true, message: "Status updated" });
+  } catch (error) {
+    console.log(error.message);
+    res.json({ success: false, message: error.message });
+  }
+};

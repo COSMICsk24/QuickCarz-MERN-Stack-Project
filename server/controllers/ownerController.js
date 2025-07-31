@@ -3,7 +3,6 @@ import Car from "../models/Car.js";
 import User from "../models/User.js";
 import Booking from "../models/Booking.js";
 import fs from "fs";
-import { error } from "console";
 
 
 export const changeRoleToOwner = async (req, res)=>{
@@ -128,7 +127,7 @@ export const getDashboardData = async (req, res) =>{
             recentBookings: bookings.slice(0,3),
             monthlyRevenue
         }
-        res.json({success: false, message: error.message});
+        res.json({success: true, dashboardData});
 
 
     } catch(error){
