@@ -1,9 +1,13 @@
 import React from 'react';
 import { assets } from '../assets/assets';
+import {motion} from 'motion/react'
 
 const Banner = () => {
   return (
-    <div
+    <motion.div
+    initial={{opacity: 0, y: 50}}
+    whileInView={{opacity: 1, y: 0}}
+    transition={{duration: 0.6}}
       className='flex flex-col md:flex-row md:items-start items-center justify-between px-8 min-md:pl-14 pt-10 max-w-6xl mx-3 md:mx-auto rounded-2xl overflow-hidden p-6'
       style={{
         background: 'linear-gradient(to right, #0558FE, #A9CFFF)',
@@ -17,16 +21,22 @@ const Banner = () => {
         <p className='max-w-130'>
           We take care of insurance, driver verification, and secure payments — so you can relax and earn with ease.
         </p>
-        <button className='px-6 py-2 bg-white hover:bg-slate-100 transition-all text-primary rounded-lg text-sm mt-4 cursor-pointer'>
+        <motion.button
+        whileHover={{scale: 1.05}}
+        whileTap={{sacle: 0.95}}
+        className='px-6 py-2 bg-white hover:bg-slate-100 transition-all text-primary rounded-lg text-sm mt-4 cursor-pointer'>
           List Your Car
-        </button>
+        </motion.button>
       </div>
-      <img
+      <motion.img
+      initial={{opacity: 0, x: 50}}
+    whileInView={{opacity: 1, x: 0}}
+    transition={{duration: 0.6, delay: 0.4}}
         src={assets.banner_car_image}
         alt='car'
         className='max-h-45 mt-10'
       />
-    </div>
+    </motion.div>
   );
 };
 

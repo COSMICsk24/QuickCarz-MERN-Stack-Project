@@ -3,6 +3,8 @@ import {  assets} from '../assets/assets';
 import Title from '../components/Title';
 import { useAppContext } from '../context/AppContext';
 import {toast} from 'react-hot-toast';
+import {motion} from 'motion/react'
+
 
 const MyBookings = () => {
 
@@ -32,11 +34,18 @@ const MyBookings = () => {
   }, [user]);
 
   return (
-    <div className='px-6 md:px-16 lg:px-24 xl:px-32 3xl:px-48 mt-16 text-sm max-w-7xl'>
+    <motion.div
+    initial={{opacity: 0, y: 30}}
+    animate={{opacity: 1, y: 0}}
+    transition={{duration: 0.6}}
+     className='px-6 md:px-16 lg:px-24 xl:px-32 3xl:px-48 mt-16 text-sm max-w-7xl'>
 
       <Title title='My Bookings' subTitle='View and manage your all car bookings' align='left' />
 
-      <div>
+      <motion.div
+      initial={{opacity: 0, y: 30}}
+    animate={{opacity: 1, y: 0}}
+    transition={{delay: 0.5, duration: 0.4}}>
         {bookings.map((booking, index) => (
           <div
             key={booking._id || index}
@@ -100,9 +109,9 @@ const MyBookings = () => {
 
           </div>
         ))}
-      </div>
+      </motion.div>
 
-    </div>
+    </motion.div>
   );
 };
 
