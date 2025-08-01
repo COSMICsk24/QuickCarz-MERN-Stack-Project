@@ -4,7 +4,6 @@
 ![Node.js](https://img.shields.io/badge/Backend-Node.js-green?logo=node.js)
 ![MongoDB](https://img.shields.io/badge/Database-MongoDB-brightgreen?logo=mongodb)
 ![Status](https://img.shields.io/badge/Project-Completed-success)
-![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
 **QuickCarz** is a complete **MERN Stack Car Rental Application** that allows users to explore and book cars, while enabling car owners to manage listings and bookings through a dynamic dashboard. The project features modern UI/UX design, secure authentication, and fully functional booking logic.
 
@@ -12,7 +11,7 @@
 
 ## 🔗 Live Demo
 
-🚀 [QuickCarz Live (If Hosted)](https://your-live-link.com)
+🚀 [QuickCarz Live (If Hosted)](https://quick-carz.vercel.app/)
 
 ---
 
