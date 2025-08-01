@@ -44,12 +44,8 @@
 
 ---
 
-## 🗂️ Folder Structure
 
----
-
-
-###✅ Completed Milestones
+### ✅ Completed Milestones
 
  Full car booking flow
 
@@ -61,7 +57,7 @@
 
  Clean UI with Tailwind
 
-###📈 Future Enhancements
+### 📈 Future Enhancements
 
 Razorpay / Stripe Integration
 
