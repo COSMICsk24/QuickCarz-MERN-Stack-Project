@@ -11,7 +11,7 @@
 
 ## 🔗 Live Demo
 
-🚀 [QuickCarz Live (If Hosted)](https://quick-carz.vercel.app/)
+🚀 [QuickCarz Live](https://quick-carz.vercel.app/)
 
 ---
 
