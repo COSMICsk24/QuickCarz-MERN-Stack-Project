@@ -46,23 +46,14 @@
 
 
 ### ✅ Completed Milestones
-
- Full car booking flow
-
- Owner dashboard
-
- JWT-based authentication
-
- Image upload with Multer
-
- Clean UI with Tailwind
+- Full car booking flow
+- Owner dashboard
+- JWT-based authentication
+- Image upload with Multer
+- Clean UI with Tailwind
 
 ### 📈 Future Enhancements
-
-Razorpay / Stripe Integration
-
-Email Notifications
-
-Admin Analytics Panel
-
-Google Maps for pickup location
+- Razorpay / Stripe Integration
+- Email Notifications
+- Admin Analytics Panel
+- Google Maps for pickup location
